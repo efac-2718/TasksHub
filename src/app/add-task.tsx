@@ -17,7 +17,7 @@ export default function AddTaskScreen() {
   const [taskDescription, setDescription] = useState('');
 
   const saveTask = async () => {
-    if (!moduleCode || !taskName) {
+    if (!taskName) {
       Alert.alert('Error', 'Please fill in all fields');
       return;
     }
@@ -42,7 +42,7 @@ export default function AddTaskScreen() {
       await Notifications.scheduleNotificationAsync({
         content: {
           title: 'Task Saved Successfully! 📋',
-          body: `Don't forget to complete your ${moduleCode}.`,
+          body: `Don't forget to complete your ${taskName}.`,
         },
         trigger: null, // trigger immediately
       });
@@ -77,7 +77,7 @@ export default function AddTaskScreen() {
         <Text style={styles.label}>Task Description</Text>
         {/* Use TextInput to input the task description from the user.
             Use multiline={true} numberOfLines={4} to add multiple lines for the textbox. */}
-        <TextInput style={styles.TextInput}
+        <TextInput style={styles.textInput}
           placeholder='Enter the task description'
           multiline={true}
           numberOfLines={4}
@@ -101,7 +101,7 @@ const styles = StyleSheet.create({
   label: {
 
   },
-  TextInput: {
+  textInput: {
 
   },
   button: {

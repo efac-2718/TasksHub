@@ -14,6 +14,9 @@ import {
 
 export default function ProfileScreen() {
   // Create variables to store Student Name, Student ID and Profile Image.
+  const [studentName, setStudentName] = useState('');
+  const [studentId, setStudentId] = useState('');
+  const [profileImage, setProfileImage] = useState<string | null>('');
 
   useEffect(() => {
     loadProfileData();
@@ -120,6 +123,13 @@ export default function ProfileScreen() {
       {/* Add UI elements to show 'Student Profile' text,
           get the username and Student ID.
           Add placeholders to display text inside the textbox. */}
+          <Text style={styles.ProfileText}>Student Profile</Text>
+          <View style={styles.inputSection}>
+            <Text style={styles.label}>Name</Text>
+            <TextInput placeholder='John Doe' style={styles.input}/>
+            <Text style={styles.label}>Student ID</Text>
+            <TextInput placeholder='CS/2020/001' style={styles.input}/>
+          </View>
 
       {/* Create two different buttons to save the user details
           and clear the database. Call the functions inside the button. */}
@@ -127,3 +137,33 @@ export default function ProfileScreen() {
     </ScrollView>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+
+  },
+  ProfileText: {
+
+  },
+  input: {
+    
+  },
+  imageContainer: {
+
+  },
+  avatar: {
+
+  },
+  editBadge: {
+
+  },
+  editBadgeText: {
+
+  },
+  inputSection: {
+
+  },
+  label: {
+
+  },
+});
