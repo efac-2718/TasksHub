@@ -17,7 +17,7 @@ export default function AddTaskScreen() {
   const [taskDescription, setDescription] = useState('');
 
   const saveTask = async () => {
-    if (!taskName) {
+    if (!taskName.trim() || !taskDescription.trim()) {
       Alert.alert('Error', 'Please fill in all fields');
       return;
     }
@@ -39,13 +39,22 @@ export default function AddTaskScreen() {
       await AsyncStorage.setItem('tasks', JSON.stringify(tasksArray));
 
       // 4. Trigger a local notification
-      await Notifications.scheduleNotificationAsync({
-        content: {
-          title: 'Task Saved Successfully! 📋',
-          body: `Don't forget to complete your ${taskName}.`,
-        },
-        trigger: null, // trigger immediately
-      });
+      // (Android 13+ and iOS need the user's permission before showing one.
+      //  Its own try/catch means a notification problem never stops the task being saved.)
+      try {
+        const { status } = await Notifications.requestPermissionsAsync();
+        if (status === 'granted') {
+          await Notifications.scheduleNotificationAsync({
+            content: {
+              title: 'Task Saved Successfully! 📋',
+              body: `Don't forget to complete your ${taskName}.`,
+            },
+            trigger: null, // trigger immediately
+          });
+        }
+      } catch (notificationError) {
+        console.warn('Could not show notification', notificationError);
+      }
 
       // 5. Navigate back to dashboard
       router.back();
@@ -59,32 +68,50 @@ export default function AddTaskScreen() {
     // Use ImageBackground to display an image in the background of the UI.
     <ImageBackground
       source="https://img.magnific.com/free-vector/isometric-time-management-concept-illustrated_52683-55534.jpg?semt=ais_hybrid&w=740&q=80"
-      style={styles.container}
-      imageStyle={styles.image}
-      contentFit='cover'
-      >
+      style={styles.background}
+      imageStyle={styles.backgroundImage}
+      contentFit="cover"
+    >
       <View style={styles.container}>
         {/* Insert an image to display as a banner. */}
         <Image
-          source=""
-          style={styles.image}
-          contentFit='cover'
+          source="https://static.vecteezy.com/system/resources/previews/016/921/110/non_2x/business-task-management-illustration-concept-on-white-background-vector.jpg"
+          style={styles.banner}
+          contentFit="cover"
           transition={500}
         />
+
         <Text style={styles.label}>Task Name</Text>
         {/* Use TextInput to input the task name from the user. */}
-        <TextInput placeholder='Enter the task' style={styles.textInput}/>
+        <TextInput
+          style={styles.textInput}
+          placeholder="Enter the task"
+          value={taskName}
+          onChangeText={setTaskName}
+        />
+
         <Text style={styles.label}>Task Description</Text>
         {/* Use TextInput to input the task description from the user.
             Use multiline={true} numberOfLines={4} to add multiple lines for the textbox. */}
-        <TextInput style={styles.textInput}
-          placeholder='Enter the task description'
+        <TextInput
+          style={[styles.textInput, styles.textArea]}
+          placeholder="Enter the task description"
+          value={taskDescription}
+          onChangeText={setDescription}
           multiline={true}
           numberOfLines={4}
+          textAlignVertical="top"
         />
+
         {/* Create a 'Save Task' button using TouchableOpacity.
             (Style it based on the UI) */}
-          <TouchableOpacity style={styles.button}/>
+        <TouchableOpacity
+          style={styles.button}
+          onPress={saveTask}
+          activeOpacity={0.8}
+        >
+          <Text style={styles.buttonText}>Save Task</Text>
+        </TouchableOpacity>
       </View>
     </ImageBackground>
   );
@@ -92,20 +119,53 @@ export default function AddTaskScreen() {
 
 
 const styles = StyleSheet.create({
-  container: {
-    
+  background: {
+    flex: 1,
+    width: '100%',
   },
-  image: {
-
+  backgroundImage: {
+    opacity: 0.3, // faded, so the form stays easy to read
+  },
+  container: {
+    flex: 1,
+    padding: 16,
+  },
+  banner: {
+    width: '100%',
+    height: 180,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: '#c7c7f0',
+    marginBottom: 20,
   },
   label: {
-
+    fontSize: 14,
+    fontWeight: '700',
+    marginBottom: 6,
   },
   textInput: {
-
+    backgroundColor: 'white',
+    borderWidth: 1,
+    borderColor: '#dddddd',
+    borderRadius: 6,
+    paddingHorizontal: 10,
+    paddingVertical: 10,
+    marginBottom: 16,
+  },
+  textArea: {
+    height: 100,
   },
   button: {
-    
-  }
-
-})
+    backgroundColor: '#269e0e',
+    borderRadius: 5,
+    paddingVertical: 18,
+    alignItems: 'center',
+    marginTop: 'auto', // pushes the button to the bottom of the screen
+    marginBottom: 10,
+  },
+  buttonText: {
+    color: 'white',
+    fontWeight: '800',
+    fontSize: 16,
+  },
+});

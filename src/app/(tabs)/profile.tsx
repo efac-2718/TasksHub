@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import {
   Alert,
   Image,
+  Pressable,
   ScrollView,
   StyleSheet,
   Text,
@@ -13,14 +14,10 @@ import {
 } from 'react-native';
 
 export default function ProfileScreen() {
-  // Create variables to store Student Name, Student ID and Profile Image.
+  // Variables to store Student Name, Student ID and Profile Image.
   const [studentName, setStudentName] = useState('');
   const [studentId, setStudentId] = useState('');
-  const [profileImage, setProfileImage] = useState<string | null>('');
-
-  useEffect(() => {
-    loadProfileData();
-  }, []);
+  const [profileImage, setProfileImage] = useState<string | null>(null);
 
   const loadProfileData = async () => {
     try {
@@ -37,6 +34,14 @@ export default function ProfileScreen() {
     }
   };
 
+  // Load the saved profile once, when the screen first opens
+  // (declared after loadProfileData, because it calls loadProfileData)
+  useEffect(() => {
+    // The state updates in loadProfileData happen after `await`, not synchronously in the effect.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    loadProfileData();
+  }, []);
+
   // <-- 3. Function to pick an image from the gallery
   const pickImage = async () => {
     // Request permission (optional but good practice)
@@ -51,7 +56,7 @@ export default function ProfileScreen() {
     }
 
     const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      mediaTypes: ['images'], // newer form of ImagePicker.MediaTypeOptions.Images
       allowsEditing: true, // Allows cropping
       aspect: [1, 1], // Forces a square crop perfect for avatars
       quality: 0.8,
@@ -106,6 +111,7 @@ export default function ProfileScreen() {
       <TouchableOpacity
         onPress={pickImage}
         style={styles.imageContainer}
+        activeOpacity={0.8}
       >
         <Image
           source={{
@@ -123,16 +129,42 @@ export default function ProfileScreen() {
       {/* Add UI elements to show 'Student Profile' text,
           get the username and Student ID.
           Add placeholders to display text inside the textbox. */}
-          <Text style={styles.ProfileText}>Student Profile</Text>
-          <View style={styles.inputSection}>
-            <Text style={styles.label}>Name</Text>
-            <TextInput placeholder='John Doe' style={styles.input}/>
-            <Text style={styles.label}>Student ID</Text>
-            <TextInput placeholder='CS/2020/001' style={styles.input}/>
-          </View>
+      <Text style={styles.profileText}>Student Profile</Text>
+
+      <View style={styles.inputSection}>
+        <Text style={styles.label}>Name</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="John Doe"
+          value={studentName}
+          onChangeText={setStudentName}
+        />
+
+        <Text style={styles.label}>Student ID</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="CS/2020/001"
+          value={studentId}
+          onChangeText={setStudentId}
+          autoCapitalize="characters"
+        />
+      </View>
 
       {/* Create two different buttons to save the user details
           and clear the database. Call the functions inside the button. */}
+      <Pressable
+        style={({ pressed }) => [styles.button, styles.saveButton, pressed && styles.pressed]}
+        onPress={saveProfileData}
+      >
+        <Text style={styles.buttonText}>Save Details</Text>
+      </Pressable>
+
+      <Pressable
+        style={({ pressed }) => [styles.button, styles.clearButton, pressed && styles.pressed]}
+        onPress={clearAllData}
+      >
+        <Text style={styles.buttonText}>Clear All Tasks</Text>
+      </Pressable>
 
     </ScrollView>
   );
@@ -140,30 +172,80 @@ export default function ProfileScreen() {
 
 const styles = StyleSheet.create({
   container: {
-
-  },
-  ProfileText: {
-
-  },
-  input: {
-    
+    flexGrow: 1,
+    alignItems: 'center',
+    padding: 20,
+    paddingTop: 40,
   },
   imageContainer: {
-
+    marginBottom: 16,
   },
   avatar: {
-
+    width: 120,
+    height: 120,
+    borderRadius: 60, // half the width makes it a circle
+    backgroundColor: '#e6e6e6',
   },
   editBadge: {
-
+    position: 'absolute',
+    right: 0,
+    bottom: 4,
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: '#007AFF',
+    borderWidth: 2,
+    borderColor: 'white',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   editBadgeText: {
-
+    color: 'white',
+    fontSize: 14,
+  },
+  profileText: {
+    fontSize: 24,
+    fontWeight: '700',
+    marginBottom: 20,
   },
   inputSection: {
-
+    width: '100%',
   },
   label: {
-
+    fontSize: 16,
+    fontWeight: '600',
+    marginBottom: 6,
+  },
+  input: {
+    backgroundColor: '#faf5f5',
+    borderRadius: 6,
+    width: '100%',
+    borderColor: '#d8d5d5',
+    borderWidth: 1,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    marginBottom: 20,
+  },
+  button: {
+    width: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 14,
+    borderRadius: 6,
+    marginBottom: 12,
+  },
+  saveButton: {
+    backgroundColor: '#007AFF',
+  },
+  clearButton: {
+    backgroundColor: 'red',
+  },
+  pressed: {
+    opacity: 0.8,
+  },
+  buttonText: {
+    color: 'white',
+    fontWeight: '700',
+    fontSize: 16,
   },
 });

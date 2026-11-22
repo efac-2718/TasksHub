@@ -29,7 +29,7 @@ export default function TabLayout() {
         options={{
           title: 'Profile',
           tabBarIcon: ({ color }) => (
-            <FontAwesome6 name="user" size={24} color="black" />
+            <FontAwesome6 name="user" size={22} color={color} />
           )
         }}/>
     </Tabs>

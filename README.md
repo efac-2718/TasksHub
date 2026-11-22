@@ -1,56 +1,48 @@
-# Welcome to your Expo app 👋
+# TasksHub
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+Mobile Application Development, Practical Tutorial 07: **Persistent Storage & Local Notifications**.
 
-## Get started
+TasksHub is a small task manager built with Expo and Expo Router. You can add tasks, see them on a dashboard, and keep a student profile with a photo. Tasks and profile details are saved on the device, so they are still there after you close and reopen the app.
 
-1. Install dependencies
+## What we built
 
-   ```bash
-   npm install
-   ```
+| Screen | File | What it does |
+|---|---|---|
+| Root layout | `src/app/_layout.tsx` | Sets up the notification handler so alerts show while the app is open, and defines a **Stack** with the `(tabs)` group as the main screen and `add-task` as a modal on top. |
+| Tabs layout | `src/app/(tabs)/_layout.tsx` | Bottom tab bar with two tabs, **Dashboard** and **Profile**, using vector icons. |
+| Dashboard | `src/app/(tabs)/index.tsx` | Reads the saved tasks from AsyncStorage and lists them over a background image. `useFocusEffect` reloads the list every time you come back to this tab. The **+ Add New Task** button opens the Add Task screen. |
+| Add Task | `src/app/add-task.tsx` | Form for a task name and a multi-line description. **Save Task** adds the task to the saved array, shows a local notification, and goes back to the Dashboard. |
+| Profile | `src/app/(tabs)/profile.tsx` | Student name, student ID and a profile photo chosen from the gallery with the Image Picker. **Save Details** stores the profile; **Clear All Tasks** wipes all saved data. |
 
-2. Start the app
+## Concepts covered
 
-   ```bash
-   npx expo start
-   ```
+- **Component state vs persistent storage:** `useState` only lasts while the screen is open. AsyncStorage keeps data after the app is closed.
+- **AsyncStorage:** stores strings only, so the task array and profile object are saved with `JSON.stringify()` and read back with `JSON.parse()`.
+- **Hybrid navigation (Tabs + Stack):** the tabs switch between Dashboard and Profile. The Stack puts Add Task on top of the tabs, so the back arrow returns to the Dashboard.
+- **Local notifications (`expo-notifications`):** a notification is triggered by the app itself, right after a task is saved, with no server involved.
+- **Image Picker (`expo-image-picker`):** asks for photo-library permission, then opens the gallery with a square crop for the avatar. The chosen image's URI is saved with the profile.
 
-In the output, you'll find options to open the app in a
+## Project structure
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **src/app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
-
-```bash
-npm run reset-project
+```
+src/app/
+├── _layout.tsx        Root Stack + notification handler
+├── add-task.tsx       Add Task screen (modal)
+└── (tabs)/
+    ├── _layout.tsx    Bottom tabs
+    ├── index.tsx      Dashboard
+    └── profile.tsx    Profile
 ```
 
-This command will move the starter code to the **example** directory and create a blank **src/app** directory where you can start developing.
+## Running the app
 
-### Other setup steps
+```bash
+npm install
+npx expo start
+```
 
-- To set up ESLint for linting, run `npx expo lint`, or follow our guide on ["Using ESLint and Prettier"](https://docs.expo.dev/guides/using-eslint/)
-- If you'd like to set up unit testing, follow our guide on ["Unit Testing with Jest"](https://docs.expo.dev/develop/unit-testing/)
-- Learn more about the TypeScript setup in this template in our guide on ["Using TypeScript"](https://docs.expo.dev/guides/typescript/)
+Scan the QR code with Expo Go on your phone.
 
-## Learn more
+## Output screens
 
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+Screenshots of the running app, including proof of the image picker, are in the [`Output_Screens`](Output_Screens) folder.
