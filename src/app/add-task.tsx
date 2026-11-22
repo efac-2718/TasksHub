@@ -1,11 +1,10 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Image, ImageBackground } from 'expo-image';
 import * as Notifications from 'expo-notifications';
 import { router } from 'expo-router';
 import { useState } from 'react';
 import {
   Alert,
-  Image,
-  ImageBackground,
   StyleSheet,
   Text,
   TextInput,
@@ -58,18 +57,55 @@ export default function AddTaskScreen() {
 
   return (
     // Use ImageBackground to display an image in the background of the UI.
-    <View style={styles.container}>
-      {/* Insert an image to display as a banner. */}
-
-      <Text style={styles.label}>Task Name</Text>
-      {/* Use TextInput to input the task name from the user. */}
-
-      <Text style={styles.label}>Task Description</Text>
-      {/* Use TextInput to input the task description from the user.
-          Use multiline={true} numberOfLines={4} to add multiple lines for the textbox. */}
-
-      {/* Create a 'Save Task' button using TouchableOpacity.
-          (Style it based on the UI) */}
-    </View>
+    <ImageBackground
+      source="https://img.magnific.com/free-vector/isometric-time-management-concept-illustrated_52683-55534.jpg?semt=ais_hybrid&w=740&q=80"
+      style={styles.container}
+      imageStyle={styles.image}
+      contentFit='cover'
+      >
+      <View style={styles.container}>
+        {/* Insert an image to display as a banner. */}
+        <Image
+          source=""
+          style={styles.image}
+          contentFit='cover'
+          transition={500}
+        />
+        <Text style={styles.label}>Task Name</Text>
+        {/* Use TextInput to input the task name from the user. */}
+        <TextInput placeholder='Enter the task' style={styles.textInput}/>
+        <Text style={styles.label}>Task Description</Text>
+        {/* Use TextInput to input the task description from the user.
+            Use multiline={true} numberOfLines={4} to add multiple lines for the textbox. */}
+        <TextInput style={styles.TextInput}
+          placeholder='Enter the task description'
+          multiline={true}
+          numberOfLines={4}
+        />
+        {/* Create a 'Save Task' button using TouchableOpacity.
+            (Style it based on the UI) */}
+          <TouchableOpacity style={styles.button}/>
+      </View>
+    </ImageBackground>
   );
 }
+
+
+const styles = StyleSheet.create({
+  container: {
+    
+  },
+  image: {
+
+  },
+  label: {
+
+  },
+  TextInput: {
+
+  },
+  button: {
+    
+  }
+
+})

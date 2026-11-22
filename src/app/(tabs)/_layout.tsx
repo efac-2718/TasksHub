@@ -1,5 +1,5 @@
-// Import ‘MaterialCommunityIcons’ here.
-// Import ‘tabs’ navigation here.
+import { FontAwesome6, MaterialCommunityIcons } from "@expo/vector-icons";
+import { Tabs } from "expo-router";
 
 export default function TabLayout() {
   return (
@@ -11,9 +11,9 @@ export default function TabLayout() {
       }}
     >
       <Tabs.Screen
-        // In here, give the relevant tab name, for example, index or profile.
+        name = 'index' // In here, give the relevant tab name, for example, index or profile.
         options={{
-          // Give a title as ‘Dashboard’.
+          title : 'Dashboard', // Give a title as ‘Dashboard’.
           tabBarIcon: ({ color }) => (
             <MaterialCommunityIcons
               name="view-dashboard"
@@ -24,7 +24,14 @@ export default function TabLayout() {
         }}
       />
       {/* Create the second tab for the profile.tsx and name it as ‘Profile’. */}
-      <Tabs />
+      <Tabs.Screen
+        name = 'profile'
+        options={{
+          title: 'Profile',
+          tabBarIcon: ({ color }) => (
+            <FontAwesome6 name="user" size={24} color="black" />
+          )
+        }}/>
     </Tabs>
   );
 }
